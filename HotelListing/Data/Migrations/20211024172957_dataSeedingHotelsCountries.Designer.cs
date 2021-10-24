@@ -3,14 +3,16 @@ using HotelListing.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HotelListing.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211024172957_dataSeedingHotelsCountries")]
+    partial class dataSeedingHotelsCountries
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,6 +36,26 @@ namespace HotelListing.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Countries");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Việt Nam",
+                            ShortName = "VN"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "American",
+                            ShortName = "USA"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "ThaiLand",
+                            ShortName = "TL"
+                        });
                 });
 
             modelBuilder.Entity("HotelListing.Model.Hotel", b =>
@@ -60,6 +82,32 @@ namespace HotelListing.Migrations
                     b.HasIndex("CountryId");
 
                     b.ToTable("Hotels");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Address = "DaNang",
+                            CountryId = 1,
+                            Name = "Mường Thanh",
+                            Rating = 5.0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Address = "California",
+                            CountryId = 2,
+                            Name = "South Oceanside",
+                            Rating = 4.5
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Address = "Muang Phuket",
+                            CountryId = 3,
+                            Name = "Sri Panwa",
+                            Rating = 4.7999999999999998
+                        });
                 });
 
             modelBuilder.Entity("HotelListing.Model.Hotel", b =>
