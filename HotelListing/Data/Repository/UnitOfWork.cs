@@ -25,7 +25,7 @@ namespace HotelListing.Data.Repository
         public void Dispose()
         {
             _context.Dispose();
-            GC.SuppressFinalize(this); // Nó thông báo cho Garbage Collector (GC) rằng đối tượng này (unitofwork) đã được dọn sạch hoàn toàn.
+            GC.SuppressFinalize(this); // Thông báo cho Garbage Collector (GC) rằng đối tượng này (unitofwork) đã được dọn sạch hoàn toàn.
         }
 
         public async Task Save()
