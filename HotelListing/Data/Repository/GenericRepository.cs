@@ -46,7 +46,9 @@ namespace HotelListing.Data.Repository
             //  , chỉ thích hợp với get dữ liệu ra, dùng để tối ưu hóa hiệu suất
         }
 
-        public async Task<IList<T>> GetAll(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, List<string> includes = null)
+        public async Task<IList<T>> GetAll(Expression<Func<T, bool>> filter = null
+            , Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null
+            , List<string> includes = null)
         {
             IQueryable<T> query = dbSet;
             if (filter != null)

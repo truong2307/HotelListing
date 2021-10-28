@@ -31,7 +31,7 @@ namespace HotelListing.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCountries()
         {
-            _logger.LogInformation("Accessed GetCountries");
+            _logger.LogInformation("Accessed get all countries");
 
             try
             {
@@ -44,6 +44,26 @@ namespace HotelListing.Controllers
             {
                 _logger.LogError(ex, $"Somethong went wrong in the {nameof(GetCountries)}");
                 return StatusCode(500, "Internal sever error. Please try again later.");   
+            }
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetCountry(int id)
+        {
+            _logger.LogInformation("Accessed get country by id");
+
+            try
+            {
+                var countryInDb = await _unitOfWork.Countries
+                    .Get(c => c.Id == id, new List<string> { "Hotels" });
+                var countryDto = _mapper.Map<CountryDto>(countryInDb);
+
+                return Ok(countryDto);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Somethong went wrong in the {nameof(GetCountry)}");
+                return StatusCode(500, "Internal sever error. Please try again later.");
             }
         }
     }
