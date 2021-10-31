@@ -56,6 +56,8 @@ namespace HotelListing.Controllers
                     }
                     return BadRequest(ModelState);
                 }
+
+                await _userManager.AddToRolesAsync(userToDb, userRequest.Roles);
                 return Accepted();
 
             }
