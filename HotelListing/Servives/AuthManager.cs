@@ -27,14 +27,14 @@ namespace HotelListing.Servives
         }
         public async Task<string> CreateToken()
         {
-            var singingCredentials = GetSigningCredentials();
+            var signingCredentials = GetSigningCredentials();
             var claims = await GetClaims();
-            var token = GenerateTokenOptions(claims, singingCredentials);
+            var token = GenerateTokenOptions(claims, signingCredentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private JwtSecurityToken GenerateTokenOptions(List<Claim> claims, SigningCredentials singingCredentials)
+        private JwtSecurityToken GenerateTokenOptions(List<Claim> claims, SigningCredentials signingCredentials)
         {
             var jwtSettings = _configuration.GetSection("Jwt");
             var expiration = DateTime.Now.AddMinutes(Convert.ToDouble(jwtSettings.GetSection("lifetime").Value));
@@ -44,7 +44,7 @@ namespace HotelListing.Servives
                 issuer: jwtSettings.GetSection("Issuer").Value,
                 claims: claims,
                 expires: expiration,
-                signingCredentials: singingCredentials
+                signingCredentials: signingCredentials
                 );
 
             return token;
@@ -71,9 +71,9 @@ namespace HotelListing.Servives
         {
             var key = Environment.GetEnvironmentVariable("KEY");
             var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-            var singingCredentials = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
+            var signingCredentials = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
 
-            return singingCredentials;
+            return signingCredentials;
         }
 
         public async Task<bool> ValidateUser(LoginUserDto userRequest)
