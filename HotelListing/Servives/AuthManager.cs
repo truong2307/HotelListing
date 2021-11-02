@@ -71,7 +71,7 @@ namespace HotelListing.Servives
         {
             var key = Environment.GetEnvironmentVariable("KEY");
             var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-            var signingCredentials = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
+            var signingCredentials = new SigningCredentials(secret, SecurityAlgorithms.HmacSha512Signature);
 
             return signingCredentials;
         }

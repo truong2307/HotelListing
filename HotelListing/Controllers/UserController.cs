@@ -73,6 +73,9 @@ namespace HotelListing.Controllers
         }
 
         [HttpPost("Login")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login(LoginUserDto userRequest)
         {
             _logger.LogInformation($"Login Attempt for {userRequest.Email}");
