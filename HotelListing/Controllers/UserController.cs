@@ -2,6 +2,7 @@
 using HotelListing.Data.Repository.IRepository;
 using HotelListing.Dto;
 using HotelListing.Model;
+using HotelListing.Servives;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,23 +18,26 @@ namespace HotelListing.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IAuthManager _authManager;
         private readonly ILogger<UserController> _logger;
         private readonly IMapper _mapper;
         private readonly UserManager<ApiUser> _userManager;
 
-        public UserController(IUnitOfWork unitOfWork
-            , ILogger<UserController> logger
+        public UserController(ILogger<UserController> logger
             , IMapper mapper
-            , UserManager<ApiUser> userManager)
+            , UserManager<ApiUser> userManager
+            , IAuthManager authManager)
         {
-            _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
             _userManager = userManager;
+            _authManager = authManager;
         }
 
         [HttpPost("Register")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register([FromBody] UserDto userRequest)
         {
             _logger.LogInformation($"Registration Attempt for {userRequest.Email}");
@@ -64,6 +68,31 @@ namespace HotelListing.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Somethong went wrong in the {nameof(Register)}");
+                return Problem($"Somethong went wrong in the {nameof(Register)}", statusCode: 500);
+            }
+        }
+
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login(LoginUserDto userRequest)
+        {
+            _logger.LogInformation($"Login Attempt for {userRequest.Email}");
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                bool loginUserSucceeded = await _authManager.ValidateUser(userRequest);
+                if (!loginUserSucceeded)
+                {
+                    return Unauthorized();
+                }
+
+                return Accepted(new { token = await _authManager.CreateToken() });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Somethong went wrong in the {nameof(Login)}");
                 return Problem($"Somethong went wrong in the {nameof(Register)}", statusCode: 500);
             }
         }

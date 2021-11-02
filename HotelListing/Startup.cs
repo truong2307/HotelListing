@@ -2,6 +2,7 @@ using HotelListing.Configurations;
 using HotelListing.Data;
 using HotelListing.Data.Repository;
 using HotelListing.Data.Repository.IRepository;
+using HotelListing.Servives;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -49,6 +50,8 @@ namespace HotelListing
             services.AddAutoMapper(typeof(MapperInitilizer));
 
             services.AddTransient<IUnitOfWork,UnitOfWork>();
+
+            services.AddScoped<IAuthManager,AuthManager>();
 
             services.AddSwaggerGen(c =>
             {
