@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HotelListing.Data.Repository.IRepository;
 using HotelListing.Dto;
+using HotelListing.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -51,7 +52,7 @@ namespace HotelListing.Controllers
         }
 
         [Authorize]
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}", Name ="GetCountry")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetCountry(int id)
@@ -69,6 +70,33 @@ namespace HotelListing.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Somethong went wrong in the {nameof(GetCountry)}");
+                return StatusCode(500, "Internal sever error. Please try again later.");
+            }
+        }
+        [Authorize(Roles ="Admin")]
+        [HttpPost("CreateCountry")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateCountry([FromBody] CreateCountryDto countryRequest)
+        {
+            _logger.LogInformation("Accessed create country");
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var countryToDb = _mapper.Map<Country>(countryRequest);
+                await _unitOfWork.Countries.Insert(countryToDb);
+                await _unitOfWork.Save();
+
+                return CreatedAtRoute("GetCountry", new { id = countryToDb.Id }, countryToDb);
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError(ex, $"Somethong went wrong in the {nameof(CreateCountry)}");
                 return StatusCode(500, "Internal sever error. Please try again later.");
             }
         }
