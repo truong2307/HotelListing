@@ -51,6 +51,7 @@ namespace HotelListing.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [Authorize]
         [HttpGet("{id:int}", Name ="GetCountry")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -73,6 +74,7 @@ namespace HotelListing.Controllers
                 return StatusCode(500, "Internal sever error. Please try again later.");
             }
         }
+
         [Authorize(Roles ="Admin")]
         [HttpPost("CreateCountry")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -100,5 +102,45 @@ namespace HotelListing.Controllers
                 return StatusCode(500, "Internal sever error. Please try again later.");
             }
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateCountry(int id, [FromBody] UpdateCountryDto countryRequest)
+        {
+            _logger.LogInformation("Accessed update country");
+
+            if (!ModelState.IsValid || id < 1)
+            {
+                _logger.LogError($"Invalid UPDATE attempt in {nameof(UpdateCountry)}");
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var countryInDb = await _unitOfWork.Countries.Get(c => c.Id == id);
+
+                if (countryInDb == null)
+                {
+                    _logger.LogError($"Invalid UPDATE attempt in {nameof(UpdateCountry)}");
+                    return BadRequest("Submitted data is invalid");
+                }
+
+                _mapper.Map(countryRequest, countryInDb);
+                _unitOfWork.Countries.Update(countryInDb);
+                await _unitOfWork.Save();
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError(ex, $"Somethong went wrong in the {nameof(UpdateCountry)}");
+                return StatusCode(500, "Internal sever error. Please try again later.");
+            }
+        }
+
     }
 }

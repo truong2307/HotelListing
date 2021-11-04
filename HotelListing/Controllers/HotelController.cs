@@ -49,7 +49,8 @@ namespace HotelListing.Controllers
                 return StatusCode(500, "Internal sever error. Please try again later.");
             }
         }
-        [Authorize]
+
+        [Authorize(Roles ="Admin")]
         [HttpGet("{id:int}", Name = "GetHotel")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -70,7 +71,8 @@ namespace HotelListing.Controllers
                 return StatusCode(500, "Internal sever error. Please try again later.");
             }
         }
-        [Authorize(Roles ="Admin")]
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -90,6 +92,42 @@ namespace HotelListing.Controllers
 
                 return CreatedAtRoute("GetHotel", new { id = hotelToDb.Id }, hotelToDb);
 
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Somethong went wrong in the {nameof(CreateHotel)}");
+                return StatusCode(500, "Internal sever error. Please try again later.");
+            }
+        }
+
+        [Authorize(Roles ="Admin")]
+        [HttpPut("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateHotel(int id, [FromBody] UpdateHotelDto hotelRequest)
+        {
+            _logger.LogInformation("Accessed update hotel");
+            if (!ModelState.IsValid || id < 1)
+            {
+                _logger.LogError($"Invalid UPDATE attempt in {nameof(UpdateHotel)}");
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var hotelInDb = await _unitOfWork.Hotels.Get(c => c.Id == id);
+
+                if (hotelInDb == null)
+                {
+                    _logger.LogError($"Invalid UPDATE attempt in {nameof(UpdateHotel)}");
+                    return BadRequest("Submitted data is invalid");
+                }
+
+                _mapper.Map(hotelRequest, hotelInDb);
+                _unitOfWork.Hotels.Update(hotelInDb);
+                await _unitOfWork.Save();
+
+                return NoContent();
             }
             catch (Exception ex)
             {
