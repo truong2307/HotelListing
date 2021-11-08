@@ -33,19 +33,19 @@ namespace HotelListing.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetHotels()
+        public async Task<IActionResult> GetHotels([FromQuery] RequestParams requestParams)
         {
             _logger.LogInformation("Accessed get all hotel");
             try
             {
-                var hotelsInDb = await _unitOfWork.Hotels.GetAll();
+                var hotelsInDb = await _unitOfWork.Hotels.GetPageList(requestParams);
                 var hotelsDto = _mapper.Map<IList<HotelDto>>(hotelsInDb);
 
                 return Ok(hotelsDto);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Somethong went wrong in the {nameof(GetHotels)}");
+                _logger.LogError(ex, $"Something went wrong in the {nameof(GetHotels)}");
                 return StatusCode(500, "Internal sever error. Please try again later.");
             }
         }
@@ -67,7 +67,7 @@ namespace HotelListing.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Somethong went wrong in the {nameof(GetHotels)}");
+                _logger.LogError(ex, $"Something went wrong in the {nameof(GetHotels)}");
                 return StatusCode(500, "Internal sever error. Please try again later.");
             }
         }
@@ -95,7 +95,7 @@ namespace HotelListing.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Somethong went wrong in the {nameof(CreateHotel)}");
+                _logger.LogError(ex, $"Something went wrong in the {nameof(CreateHotel)}");
                 return StatusCode(500, "Internal sever error. Please try again later.");
             }
         }
@@ -131,7 +131,7 @@ namespace HotelListing.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Somethong went wrong in the {nameof(CreateHotel)}");
+                _logger.LogError(ex, $"Something went wrong in the {nameof(CreateHotel)}");
                 return StatusCode(500, "Internal sever error. Please try again later.");
             }
         }
@@ -168,7 +168,7 @@ namespace HotelListing.Controllers
             catch (Exception ex)
             {
 
-                _logger.LogError(ex, $"Somethong went wrong in the {nameof(DeleteHotel)}");
+                _logger.LogError(ex, $"Something went wrong in the {nameof(DeleteHotel)}");
                 return StatusCode(500, "Internal sever error. Please try again later.");
             }
         }

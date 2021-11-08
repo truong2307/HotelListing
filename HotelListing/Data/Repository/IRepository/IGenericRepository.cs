@@ -1,8 +1,10 @@
-﻿using System;
+﻿using HotelListing.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace HotelListing.Data.Repository.IRepository
 {
@@ -12,6 +14,10 @@ namespace HotelListing.Data.Repository.IRepository
             Expression<Func<T, bool>> filter = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
             List<string> includes = null
+            );
+        Task<IPagedList<T>> GetPageList(
+            RequestParams requestParam
+            ,List<string> includes = null
             );
         Task<T> Get(Expression<Func<T, bool>> filter, List<string> includes = null);
         Task Insert(T entity);

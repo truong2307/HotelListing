@@ -33,13 +33,13 @@ namespace HotelListing.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetCountries()
+        public async Task<IActionResult> GetCountries([FromQuery] RequestParams requestParams)
         {
             _logger.LogInformation("Accessed get all countries");
 
             try
             {
-                var countriesInDb = await _unitOfWork.Countries.GetAll();
+                var countriesInDb = await _unitOfWork.Countries.GetPageList(requestParams);
                 var countriesDto = _mapper.Map<IList<CountryDto>>(countriesInDb);
 
                 return Ok(countriesDto);
