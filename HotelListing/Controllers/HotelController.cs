@@ -66,6 +66,7 @@ namespace HotelListing.Controllers
         public async Task<IActionResult> CreateHotel([FromBody] CreateHotelDto hotelRequest)
         {
             _logger.LogInformation("Accessed create hotel");
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -86,6 +87,7 @@ namespace HotelListing.Controllers
         public async Task<IActionResult> UpdateHotel(int id, [FromBody] UpdateHotelDto hotelRequest)
         {
             _logger.LogInformation("Accessed update hotel");
+
             if (!ModelState.IsValid || id < 1)
             {
                 _logger.LogError($"Invalid UPDATE attempt in {nameof(UpdateHotel)}");
@@ -114,6 +116,7 @@ namespace HotelListing.Controllers
         public async Task<IActionResult> DeleteHotel(int id)
         {
             _logger.LogInformation("Accessed delete hotel");
+
             if (id < 1)
             {
                 _logger.LogError($"Invalid DELETE attempt in {nameof(DeleteHotel)}");
