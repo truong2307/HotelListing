@@ -5,6 +5,7 @@ using HotelListing.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -52,7 +53,7 @@ namespace HotelListing.Controllers
             _logger.LogInformation("Accessed get hotel");
 
             var hotelInDb = await _unitOfWork.Hotels
-                    .Get(c => c.Id == id, new List<string> { "Country" });
+                    .Get(c => c.Id == id, include: q => q.Include(i => i.Country));
             var hotelDto = _mapper.Map<HotelDto>(hotelInDb);
 
             return Ok(hotelDto);

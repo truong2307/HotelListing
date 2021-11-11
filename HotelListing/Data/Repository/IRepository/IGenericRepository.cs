@@ -1,4 +1,5 @@
 ﻿using HotelListing.Model;
+using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +13,15 @@ namespace HotelListing.Data.Repository.IRepository
     {
         Task<IList<T>> GetAll(
             Expression<Func<T, bool>> filter = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
-            List<string> includes = null
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null
+            ,Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null
             );
         Task<IPagedList<T>> GetPageList(
             RequestParams requestParam
-            ,List<string> includes = null
+            ,Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null
             );
-        Task<T> Get(Expression<Func<T, bool>> filter, List<string> includes = null);
+        Task<T> Get(Expression<Func<T, bool>> filter
+            , Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null);
         Task Insert(T entity);
         Task InsertRange(IEnumerable<T> entities);
         Task Delete(int id);

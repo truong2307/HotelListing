@@ -6,6 +6,7 @@ using Marvin.Cache.Headers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -47,8 +48,8 @@ namespace HotelListing.Controllers
             return Ok(countriesDto);
         }
 
-        [Authorize(Roles = "Admin")]
-        [Authorize]
+        //[Authorize(Roles = "Admin")]
+        //[Authorize]
         [HttpGet("{id:int}", Name ="GetCountry")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -57,7 +58,7 @@ namespace HotelListing.Controllers
             _logger.LogInformation("Accessed get country by id");
 
             var countryInDb = await _unitOfWork.Countries
-                    .Get(c => c.Id == id, new List<string> { "Hotels" });
+                    .Get(c => c.Id == id, include: q => q.Include(i => i.Hotels));
             var countryDto = _mapper.Map<CountryDto>(countryInDb);
 
             return Ok(countryDto);

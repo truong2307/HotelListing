@@ -1,6 +1,7 @@
 ﻿using HotelListing.Data.Repository.IRepository;
 using HotelListing.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,15 +33,13 @@ namespace HotelListing.Data.Repository
             dbSet.RemoveRange(entities);
         }
 
-        public async Task<T> Get(Expression<Func<T, bool>> filter, List<string> includes = null)
+        public async Task<T> Get(Expression<Func<T, bool>> filter
+            , Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
         {
             IQueryable<T> query = dbSet;
-            if (includes !=null)
+            if (include !=null)
             {
-                foreach (var includeProperty in includes)
-                {
-                    query = query.Include(includeProperty);
-                }
+                query = include(query);
             }
 
             return await query.AsNoTracking().FirstOrDefaultAsync(filter);
@@ -50,7 +49,7 @@ namespace HotelListing.Data.Repository
 
         public async Task<IList<T>> GetAll(Expression<Func<T, bool>> filter = null
             , Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null
-            , List<string> includes = null)
+            , Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
         {
             IQueryable<T> query = dbSet;
             if (filter != null)
@@ -58,12 +57,9 @@ namespace HotelListing.Data.Repository
                 query = query.Where(filter);
             }
 
-            if (includes != null)
+            if (include != null)
             {
-                foreach (var includeProperty in includes)
-                {
-                    query = query.Include(includeProperty);
-                }
+                query = include(query);
             }
 
             if (orderBy != null)
@@ -74,16 +70,14 @@ namespace HotelListing.Data.Repository
             return await query.AsNoTracking().ToListAsync();
         }
 
-        public async Task<IPagedList<T>> GetPageList(RequestParams requestParam, List<string> includes = null)
+        public async Task<IPagedList<T>> GetPageList(RequestParams requestParam
+            , Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
         {
             IQueryable<T> query = dbSet;
 
-            if (includes != null)
+            if (include != null)
             {
-                foreach (var includeProperty in includes)
-                {
-                    query = query.Include(includeProperty);
-                }
+                query = include(query);
             }
 
             return await query.AsNoTracking()
