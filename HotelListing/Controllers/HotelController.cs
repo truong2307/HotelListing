@@ -1,15 +1,14 @@
 ﻿using AutoMapper;
-using HotelListing.Data.Repository.IRepository;
-using HotelListing.Dto;
-using HotelListing.Model;
+using HotelListing.Core.Dtos;
+using HotelListing.Core.IRepository;
+using HotelListing.Core.Model;
+using HotelListing.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace HotelListing.Controllers
@@ -23,8 +22,8 @@ namespace HotelListing.Controllers
         private readonly IMapper _mapper;
 
         public HotelController(IUnitOfWork unitOfWork
-            ,ILogger<HotelController> logger
-            ,IMapper mapper)
+            , ILogger<HotelController> logger
+            , IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
@@ -44,7 +43,7 @@ namespace HotelListing.Controllers
             return Ok(hotelsDto);
         }
 
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id:int}", Name = "GetHotel")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -80,7 +79,7 @@ namespace HotelListing.Controllers
             return CreatedAtRoute("GetHotel", new { id = hotelToDb.Id }, hotelToDb);
         }
 
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

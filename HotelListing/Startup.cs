@@ -1,24 +1,17 @@
 using AspNetCoreRateLimit;
-using HotelListing.Configurations;
+using HotelListing.Core;
+using HotelListing.Core.IRepository;
+using HotelListing.Core.Repository;
+using HotelListing.Core.Servives;
 using HotelListing.Data;
-using HotelListing.Data.Repository;
-using HotelListing.Data.Repository.IRepository;
-using HotelListing.Servives;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Filters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace HotelListing
 {
@@ -49,17 +42,18 @@ namespace HotelListing
             services.ConfigureIdentity();
             services.ConfigureJWT(Configuration);
 
-            services.AddCors(o => {
+            services.AddCors(o =>
+            {
                 o.AddPolicy("AllowAll", builder =>
                 builder.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
             });
 
-            services.AddAutoMapper(typeof(MapperInitilizer));
+            services.ConfigureAutoMapper();
 
-            services.AddTransient<IUnitOfWork,UnitOfWork>();
-            services.AddScoped<IAuthManager,AuthManager>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IAuthManager, AuthManager>();
 
             services.AddSwaggerGen(c =>
             {
@@ -73,7 +67,7 @@ namespace HotelListing
                     Duration = 120
                 });
             }).AddNewtonsoftJson(options =>
-                options.SerializerSettings.ReferenceLoopHandling = 
+                options.SerializerSettings.ReferenceLoopHandling =
                     Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.ConfigureVersioning();

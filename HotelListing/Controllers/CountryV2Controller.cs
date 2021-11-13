@@ -1,4 +1,4 @@
-﻿using HotelListing.Data.Repository.IRepository;
+﻿using HotelListing.Core.IRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;

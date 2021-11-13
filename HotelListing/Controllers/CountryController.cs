@@ -1,16 +1,15 @@
 ﻿using AutoMapper;
-using HotelListing.Data.Repository.IRepository;
-using HotelListing.Dto;
-using HotelListing.Model;
+using HotelListing.Core.Dtos;
+using HotelListing.Core.IRepository;
+using HotelListing.Core.Model;
+using HotelListing.Data;
 using Marvin.Cache.Headers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace HotelListing.Controllers
@@ -24,8 +23,8 @@ namespace HotelListing.Controllers
         private readonly ILogger<CountryController> _logger;
 
         public CountryController(IUnitOfWork unitOfWork
-            ,IMapper mapper
-            ,ILogger<CountryController> logger)
+            , IMapper mapper
+            , ILogger<CountryController> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -48,9 +47,8 @@ namespace HotelListing.Controllers
             return Ok(countriesDto);
         }
 
-        //[Authorize(Roles = "Admin")]
-        //[Authorize]
-        [HttpGet("{id:int}", Name ="GetCountry")]
+        [Authorize(Roles = "Admin")]
+        [HttpGet("{id:int}", Name = "GetCountry")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetCountry(int id)
@@ -65,7 +63,7 @@ namespace HotelListing.Controllers
 
         }
 
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost("CreateCountry")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
