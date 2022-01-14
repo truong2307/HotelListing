@@ -41,6 +41,7 @@ namespace HotelListing.Core.Repository
             if (include != null)
             {
                 query = include(query);
+                // example query => query.Include(i => i.Hotels);
             }
 
             return await query.AsNoTracking().FirstOrDefaultAsync(filter);
